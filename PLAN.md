@@ -3,7 +3,7 @@
 > Find the right baseball drill fast: start from what's going wrong, filter by
 > position and setup, watch the video, go practice.
 
-This is a working plan. Items marked **(decide)** are open questions.
+This is a working plan. Mockups: https://claude.ai/artifact/RgbbZ6zY7J8Mbc8KE7gQaZ
 
 ---
 
@@ -12,15 +12,19 @@ This is a working plan. Items marked **(decide)** are open questions.
 | Goal | How the plan meets it |
 | --- | --- |
 | No server to run | Static site, built at deploy time, served from a CDN |
-| Under $5/month | Hosting is free; the only cost is a domain (about $1/month) |
+| Under $5/month | Hosting is free. $0 at launch on `*.pages.dev`; about $1/month once we buy a domain |
 | Find and pick drills quickly | Start from the problem, filter instantly, every drill on a card you can scan |
 | Videos for every drill | We link or embed existing videos (YouTube first); we don't host any |
 | Metadata: problems fixed, positions | Typed drill files with a checked schema; the build fails if a field is wrong |
 | Clean white look with MLB-style colors, not an MLB copy | Our own navy and red, our own wordmark, a stitch motif instead of MLB shapes |
 | No accounts, nothing saved on a server | Filter state and practice plans live in the URL |
+| Baseball only | One sport throughout: positions, taxonomy and copy are all baseball |
 
-Who uses it (assumed): youth/HS coaches and parents, often **on a phone at the
-field**. Design for mobile first, quick loads, and big tap targets.
+Who uses it: everyone, **tuned for youth through high school**. That means
+players, parents and coaches, often **on a phone at the field**. Design for
+mobile first, quick loads, big tap targets, and plain words a 12-year-old or a
+first-time parent coach understands. We cover **team drills and individual
+drills** equally, and every drill says which it is.
 
 ---
 
@@ -53,16 +57,17 @@ field**. Design for mobile first, quick loads, and big tap targets.
 | --- | --- | --- |
 | Source, issues, CI | GitHub (this repo) | $0 |
 | Build and hosting | Cloudflare Pages (unlimited bandwidth, 500 builds/mo, preview deploy per PR) | $0 |
-| Domain | Cloudflare Registrar, `.com` at cost | about $10.50/yr, about **$0.90/mo** |
+| Domain | Free `whatthedrill.pages.dev` at launch; `whatthedrill.com` through Cloudflare Registrar later | $0 now; about $10.50/yr (about **$0.90/mo**) once bought |
 | Analytics | Cloudflare Web Analytics (no cookies, no banner) | $0 |
 | Video link checks | Scheduled GitHub Action calling YouTube oEmbed (no API key) | $0 |
-| **Total** | | **under $1/month** |
+| **Total** | | **$0 now, under $1/month with the domain** |
 
 GitHub Pages is an equally free fallback. Cloudflare wins on preview deploys,
 redirects, and the registrar living in the same place.
 
-**(decide)** Domain: `whatthedrill.com`. Check availability; `.app` and `.dev`
-are about $12–14/yr if it's taken.
+**Domain (decided):** launch on the free `*.pages.dev` address. If the site
+works out, buy `whatthedrill.com` and attach it in Cloudflare. That's a
+settings change, not a rebuild.
 
 ---
 
@@ -81,7 +86,8 @@ problems: [rolling-over, casting, late-on-inside-pitch]   # taxonomy refs
 positions: [all]                   # P C 1B 2B SS 3B LF CF RF | infield | outfield | all
 level: [beginner, intermediate]    # beginner | intermediate | advanced
 ages: { min: 7, max: 18 }
-players: { min: 1, max: 2 }        # solo, partner, small group, team
+format: partner                    # solo | partner | small-group | team
+players: { min: 2, max: 2 }
 duration_min: 10
 equipment: [tee, bat, balls, net]
 space: cage                        # cage | infield | outfield | open-field | indoor | backyard
@@ -141,17 +147,21 @@ to exist, every drill has at least one video, and slugs are unique.
 | `/drills/[slug]` | Video first, then steps, cues, mistakes, a metadata strip, and related drills |
 | `/problems/[slug]` | What the problem looks like, then its drills sorted by fit, solo drills first |
 | `/positions/[slug]` | Every drill for a position |
-| `/about` | What the site is, video credits and sources, a link to suggest a drill |
+| `/about` | What the site is, video credits and sources |
 
 ### Making it quick to decide
 
 - **Drill cards** show what matters at a glance: title, a one-line summary, the
-  problems it fixes (chips), ⏱ minutes, 👤 player count, 🧰 equipment icons, and
-  a thumbnail.
+  problems it fixes (chips), minutes, player count and equipment (simple line
+  icons, no emoji), a thumbnail, and a Solo / Partner / Team badge.
+- **Position diamond** on the home page: tap a spot on the field to see its
+  drills.
 - **Lite YouTube embed:** show the thumbnail and load the player only on tap,
   through `youtube-nocookie.com`. That keeps pages fast and tracker-free.
-- **"Solo drill" / "No equipment"** quick toggles. These are the most common
-  constraints at home.
+- **"Who's practicing" filter (Solo / Partner / Team)** sits first in the
+  filters. It's the biggest fork between a kid in the backyard and a coach
+  running practice. There are also "No equipment" and "Under 10 minutes" quick
+  picks.
 - **Related drills** are hand-picked first, then filled in by shared problems.
 
 ### Later, still serverless
@@ -160,7 +170,6 @@ to exist, every drill has at least one video, and slugs are unique.
   (`/plan?d=tee-inside-outside,short-hop-pickups`). Print-friendly and shareable
   by text, with nothing stored.
 - **Printable drill cards** using a print stylesheet.
-- **Suggest a drill:** a GitHub Issue form template, or a free Google Form.
 
 ---
 
@@ -190,7 +199,8 @@ and the colors are close to MLB's but not identical.
   the "?" built from a seam curve.
 
 **Type:** Barlow Condensed (bold, all caps) for headings, which gives a
-scoreboard feel. Inter for body text. Both are OFL-licensed and self-hosted.
+scoreboard feel. Barlow for body text: a sturdy companion that's easy to read
+outdoors. Both are OFL-licensed and self-hosted.
 
 Light theme only for v1 since white is the identity. Dark mode can come later.
 
@@ -205,9 +215,13 @@ Light theme only for v1 since white is the identity. Dark mode can come later.
 - **Videos:** embed or link only, credit the channel, and prefer established
   coaching channels and organizations with clear demos. Store `start` so the
   embed jumps to the right moment.
-- **Workflow:** Claude researches and drafts drill files with candidate videos
-  → the owner reviews (watches the video, checks the drill fits) → sets
-  `checked` → merge.
+- **Curated by the owner.** No public submissions. Claude researches and
+  drafts drill files with candidate videos → the owner reviews (watches the
+  video, checks the drill fits) → sets `checked` → merge.
+- **Video sources:** no block list. Any clear, accurate demo qualifies; prefer
+  ones that show youth or HS players when the quality is equal.
+- **Coverage target for v1:** roughly half individual (solo or partner) and
+  half team drills, and every position has at least 3 drills of its own.
 - **Link rot:** a weekly GitHub Action asks YouTube oEmbed about every URL
   (`https://www.youtube.com/oembed?url=…`; a 401 or 404 means it's gone or
   private) and opens an issue listing dead links.
@@ -235,19 +249,19 @@ Light theme only for v1 since white is the identity. Dark mode can come later.
    position pages, related drills, lite embeds.
 4. **Polish and launch:** logo and wordmark, OG images, structured data,
    analytics, accessibility pass, custom domain.
-5. **Extras:** practice plan builder, print cards, suggest-a-drill form, video
-   link-check bot.
+5. **Extras:** practice plan builder, print cards, video link-check bot.
+6. **Domain:** buy `whatthedrill.com` if the site is a keeper.
 
 ---
 
-## 9. Open questions
+## 9. Decisions log
 
-1. **Audience and age range:** youth (6–12), teen and HS, or all levels? This
-   sets the reading level and which drills come first.
-2. **Coaches vs. players:** team drills for practice plans, or solo and
-   backyard work for players, or both equally?
-3. **Softball:** baseball only, or tag drills that also work for softball?
-4. **Domain:** is `whatthedrill.com` available, or do you already own one?
-5. **Contributions:** keep it curated by you, or let people suggest drills
-   (GitHub issue form or Google Form)?
-6. **Video sources:** any channels or coaches you trust (or want to avoid)?
+| Question | Decision |
+| --- | --- |
+| Audience | Everyone, tuned for youth through high school |
+| Drill types | Team and individual drills, both first-class |
+| Sport | Baseball only |
+| Domain | Free `*.pages.dev` first; buy `whatthedrill.com` later if it's a keeper |
+| Contributions | Curated by the owner only |
+| Video sources | No restrictions |
+| Mockups | Done: home, drill finder, drill page, phone views, brand sheet |
