@@ -7,7 +7,8 @@ interface Props {
 }
 
 const { activeCategory } = Astro.props;
-const { tileCategories } = await getCatalog();
+const { tileCategories, bannerCategory } = await getCatalog();
+const navCategories = bannerCategory ? [...tileCategories, bannerCategory] : tileCategories;
 const onDrills = Astro.url.pathname === '/drills/';
 ---
 
@@ -20,14 +21,14 @@ const onDrills = Astro.url.pathname === '/drills/';
     <nav aria-label="Main">
       <ul>
         {
-          tileCategories.map((c) => (
+          navCategories.map((c) => (
             <li>
               <a
                 href={categoryUrl(c)}
                 data-carry
                 aria-current={c.id === activeCategory ? 'page' : undefined}
               >
-                {c.data.title}
+                {c.data.nav_label ?? c.data.title}
               </a>
             </li>
           ))

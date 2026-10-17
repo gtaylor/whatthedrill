@@ -27,6 +27,7 @@
 
 - id: starting-out
   title: Just starting out
+  nav_label: Basics
   blurb: Simple first-season drills, and ones that build confidence around the ball.
   icon: sprout
   order: 5

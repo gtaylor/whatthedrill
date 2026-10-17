@@ -12,6 +12,8 @@ const categories = defineCollection({
   schema: z.object({
     id: slug,
     title: z.string(),
+    // Shorter name for the top nav, when the title is too long for it.
+    nav_label: z.string().optional(),
     blurb: z.string(),
     icon: z.enum(ICON_NAMES),
     order: z.number().int(),
