@@ -322,7 +322,7 @@ Light theme only for v1 since white is the identity. Dark mode can come later.
    drills. `MIN_DRILLS_PER_AREA` is 1 until Content v1. Deploys to
    Cloudflare as a static-assets Worker (steps in README.md). Remaining:
    watch the 5 videos and set `site` to the live URL.
-2. **Content v1:** ✅ 93 drills written, every area has 5–10 and every
+2. **Content v1:** ✅ 77 drills written, every area has 5–10 and every
    focus has at least one. `MIN_DRILLS_PER_AREA` is now 5. Each video was
    confirmed to exist via YouTube oEmbed, but none is marked `checked` yet:
    the owner still needs to watch them and confirm each one shows its drill.
