@@ -1,7 +1,7 @@
 # WhatTheDrill — Build Plan
 
-> Find the right baseball drill fast: start from what's going wrong, filter by
-> position and setup, watch the video, go practice.
+> Find the right baseball drill fast: pick what you want to get better at,
+> narrow it to how you're practicing, watch the video, go practice.
 
 This is a working plan. Mockups: https://claude.ai/artifact/RgbbZ6zY7J8Mbc8KE7gQaZ
 
@@ -13,9 +13,9 @@ This is a working plan. Mockups: https://claude.ai/artifact/RgbbZ6zY7J8Mbc8KE7gQ
 | --- | --- |
 | No server to run | Static site, built at deploy time, served from a CDN |
 | Under $5/month | Hosting is free. $0 at launch on `*.pages.dev`; about $1/month once we buy a domain |
-| Find and pick drills quickly | Start from the problem, filter instantly, every drill on a card you can scan |
+| Find and pick drills quickly | Start from a goal tile, narrow by focus and setup, every drill on a card you can scan |
 | Videos for every drill | We link or embed existing videos (YouTube first); we don't host any |
-| Metadata: problems fixed, positions | Typed drill files with a checked schema; the build fails if a field is wrong |
+| Metadata: what each drill works on, positions | Typed drill files tagged with focuses (which roll up to goals); the build fails if a field is wrong |
 | Clean white look with MLB-style colors, not an MLB copy | Our own navy and red, our own wordmark, a stitch motif instead of MLB shapes |
 | No accounts, nothing saved on a server | Filter state and practice plans live in the URL |
 | Baseball only | One sport throughout: positions, taxonomy and copy are all baseball |
@@ -82,7 +82,7 @@ title: Tee Work – Inside/Outside
 slug: tee-inside-outside
 summary: Move the tee to teach the hands where each pitch location is hit.
 skill: hitting                     # hitting | fielding | throwing | pitching | catching | baserunning | conditioning
-problems: [rolling-over, casting, late-on-inside-pitch]   # taxonomy refs
+focuses: [rolling-over, long-swing]   # refs to taxonomy/focuses.yaml; goals are derived from these
 positions: [all]                   # P C 1B 2B SS 3B LF CF RF | infield | outfield | all
 level: [beginner, intermediate]    # beginner | intermediate | advanced
 ages: { min: 7, max: 18 }
@@ -113,28 +113,75 @@ related: [one-hand-tee, high-tee]
 - ...
 ```
 
-### Taxonomy (`src/content/taxonomy/`)
+### Taxonomy: goals and focuses (`src/content/taxonomy/`)
 
-Problems are their own entries, each with a description and "signs you'll
-see," so they can have their own pages and wording kids and parents use. First
-draft:
+There are two levels, and drills are tagged at the lower one only:
 
-- **Hitting:** casting / long swing, dropping hands, lunging / weight forward
-  early, stepping in the bucket, pulling head, uppercut / pop-ups, rolling over,
-  late on fastballs, chasing bad pitches, low bat speed, bailing / fear of ball
-- **Fielding:** not getting low, poor glove presentation, backhand trouble, bad
-  footwork into the throw, slow first step, misjudging fly balls, drifting on
-  fly balls, double play feeds and turns
-- **Throwing:** short-arming / pushing, inaccurate throws, no four-seam grip,
-  arm-only (no lower half), slow transfer
-- **Pitching:** walks / poor control, flying open, inconsistent release point,
-  no follow-through, slow from the stretch
-- **Catching:** blocking balls in the dirt, framing, slow pop time, fear behind
-  the plate
-- **Baserunning:** slow out of the box, poor leads, wide turns, sliding
+- **Goals** (`goals.yaml`) are the landing-page tiles: what someone wants to
+  get better at, in their own words. Each one has a slug, a title, a one-line
+  blurb, an icon, a skill label and a sort order.
+- **Focuses** (`focuses.yaml`) are the specific things inside a goal. Each one
+  is either a **fix** (something going wrong: "rolling over") or a **build**
+  (something to develop: "bat speed"). Each focus belongs to one or more
+  goals. Fixes also get "signs you'll see" so a parent can recognize them.
+- **Drills list focuses only.** A drill's goals are worked out from its
+  focuses, so there's one place to tag and nothing to keep in sync.
 
-**Validation in CI:** every `problems`, `positions`, and `related` reference has
-to exist, every drill has at least one video, and slugs are unique.
+```yaml
+# focuses.yaml
+- slug: rolling-over
+  label: Rolling over
+  kind: fix
+  goals: [make-contact]
+  signs: Weak grounders to the pull side; top hand flips over at contact.
+- slug: first-step
+  label: Quicker first step
+  kind: build
+  goals: [ground-balls, speed]      # one focus can sit under several goals
+```
+
+#### The 12 goal tiles (v1)
+
+| # | Goal (tile) | Skill label | Focuses (✗ fix · ✓ build) |
+|---|---|---|---|
+| 1 | Make better contact | Hitting | ✗ swinging and missing · ✗ rolling over · ✗ popping up · ✗ long, loopy swing · ✗ eyes off the ball · ✗ stepping in the bucket · ✗ dropping the hands |
+| 2 | Hit with more power | Hitting | ✓ bat speed · ✓ using the legs and hips · ✓ driving the ball in the air · ✓ strength for hitters |
+| 3 | Swing at better pitches | Hitting | ✗ late on fastballs · ✗ chasing bad pitches · ✓ pitch recognition · ✓ two-strike hitting · ✓ bunting |
+| 4 | Field ground balls cleanly | Fielding | ✗ not getting low · ✗ stabbing at the ball · ✗ backhand trouble · ✓ footwork into the throw · ✓ quicker first step · ✓ double plays |
+| 5 | Catch more fly balls | Fielding | ✗ misjudging fly balls · ✗ drifting under the ball · ✓ drop steps · ✓ calling for it · ✓ catching in the sun |
+| 6 | Make better throws | Throwing | ✗ throws all over the place · ✗ short-arming · ✗ all arm, no legs · ✗ slow transfer · ✓ four-seam grip · ✓ arm strength · ✓ arm care and warm-ups |
+| 7 | Throw more strikes | Pitching | ✗ too many walks · ✗ flying open · ✗ inconsistent release · ✗ no follow-through · ✓ pitching from the stretch · ✓ velocity (13 and up) |
+| 8 | Become a better catcher | Catching | ✗ balls getting by in the dirt · ✗ slow throws to second · ✓ receiving and framing · ✓ stance |
+| 9 | Run the bases smarter | Baserunning | ✗ slow out of the box · ✗ wide turns · ✓ leads · ✓ sliding · ✓ reading the ball |
+| 10 | Get faster and quicker | Athleticism | ✓ sprint speed · ✓ quicker first step · ✓ agility · ✓ footwork |
+| 11 | Play without fear | Confidence | ✗ bailing out at the plate · ✗ scared of hard grounders · ✗ nervous behind the plate · ✓ getting hit by a pitch safely |
+| 12 | Learn the basics | Beginners | ✓ how to throw · ✓ how to catch · ✓ how to swing · ✓ how to run the bases |
+
+**Close calls** (folded in for now, could become tiles later): arm care and
+warm-ups (in #6 and #7), double plays (in #4), bunting and small ball (in #3),
+and game situations ("know where to throw it").
+
+#### "How are you practicing?" is a separate question
+
+Situations aren't goals, so they're a row of chips under the tiles that
+applies to whichever tile is picked. Each one maps to existing drill fields:
+
+| Chip | Drill field |
+|---|---|
+| Alone | `format: solo` |
+| With a partner | `format: partner` |
+| Team practice | `format: small-group` or `team` |
+| Indoors | `space: indoor` or `backyard` |
+| 10 min or less | `duration_min <= 10` |
+
+**Validation in CI:**
+- Every `focuses`, `positions` and `related` reference must exist, and every
+  focus must name at least one goal.
+- Every drill rolls up to at least one goal.
+- A goal tile only shows once it has 5 or more drills, so a half-empty tile
+  never goes live. The build prints a coverage report per goal: drill count,
+  solo vs. team, and focuses with no drills yet.
+- Every drill has at least one video, and slugs are unique.
 
 ---
 
@@ -142,27 +189,30 @@ to exist, every drill has at least one video, and slugs are unique.
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Hero search: **"What's going wrong?"** Problem chips grouped by skill, plus "Browse all drills" |
-| `/drills` | Filterable list: skill, position, problem, players, time, equipment, level. Filters live in the URL (`?pos=SS&problem=backhand`) so they can be shared and bookmarked |
+| `/` | **"What do you want to get better at?"** 12 goal tiles, a "How are you practicing?" chip row, and a small search for people who already know what's wrong (Option B in the mockups) |
+| `/goals/[slug]` | One goal: its focus chips (with drill counts), the practicing chips, then the drill cards. State lives in the URL (`/goals/make-contact?focus=rolling-over&who=solo`) |
+| `/drills` | Full filter view: skill, position, focus, who's practicing, time, equipment, level. Filters live in the URL so they can be shared and bookmarked |
 | `/drills/[slug]` | Video first, then steps, cues, mistakes, a metadata strip, and related drills |
-| `/problems/[slug]` | What the problem looks like, then its drills sorted by fit, solo drills first |
+| `/focus/[slug]` | One focus: what it looks like ("signs you'll see"), then its drills, solo drills first. Good landing pages for search engines |
 | `/positions/[slug]` | Every drill for a position |
 | `/about` | What the site is, video credits and sources |
 
 ### Making it quick to decide
 
 - **Drill cards** show what matters at a glance: title, a one-line summary, the
-  problems it fixes (chips), minutes, player count and equipment (simple line
+  focuses it works on (chips), minutes, player count and equipment (simple line
   icons, no emoji), a thumbnail, and a Solo / Partner / Team badge.
-- **Position diamond** on the home page: tap a spot on the field to see its
-  drills.
+- **Three taps or fewer to a video:** goal tile → focus (or "Show all") →
+  drill.
+- **Position diamond** on `/positions`: tap a spot on the field to see its
+  drills. The home page links to it.
 - **Lite YouTube embed:** show the thumbnail and load the player only on tap,
   through `youtube-nocookie.com`. That keeps pages fast and tracker-free.
 - **"Who's practicing" filter (Solo / Partner / Team)** sits first in the
   filters. It's the biggest fork between a kid in the backyard and a coach
   running practice. There are also "No equipment" and "Under 10 minutes" quick
   picks.
-- **Related drills** are hand-picked first, then filled in by shared problems.
+- **Related drills** are hand-picked first, then filled in by shared focuses.
 
 ### Later, still serverless
 
@@ -233,7 +283,7 @@ Light theme only for v1 since white is the identity. Dark mode can come later.
 - Lighthouse 95+ on all four categories. Pages under 100 KB before video.
 - Accessible: keyboard-operable filters, visible focus (stitch-red ring), AA
   contrast, `aria-live` count of results.
-- SEO: one page per drill, problem, and position; `VideoObject` / `HowTo`
+- SEO: one page per drill, goal, focus and position; `VideoObject` / `HowTo`
   structured data; sitemap; Open Graph images generated at build time.
 - CI on every PR: `astro check`, schema validation, build, link check.
 
@@ -243,10 +293,11 @@ Light theme only for v1 since white is the identity. Dark mode can come later.
 
 1. **Skeleton:** Astro project, content schema, design tokens, layout,
    5 sample drills, deployed to `*.pages.dev`.
-2. **Content v1:** final taxonomy plus 50 drills with checked videos.
-   Validation CI.
-3. **Find and decide:** home search, filters with URL state, problem and
-   position pages, related drills, lite embeds.
+2. **Content v1:** final goals and focuses, plus 50 drills with checked
+   videos, enough for every v1 tile to pass the 5-drill minimum. Validation CI
+   and coverage report.
+3. **Find and decide:** goal tiles home, goal pages, filters with URL state,
+   focus and position pages, related drills, lite embeds.
 4. **Polish and launch:** logo and wordmark, OG images, structured data,
    analytics, accessibility pass, custom domain.
 5. **Extras:** practice plan builder, print cards, video link-check bot.
@@ -264,4 +315,7 @@ Light theme only for v1 since white is the identity. Dark mode can come later.
 | Domain | Free `*.pages.dev` first; buy `whatthedrill.com` later if it's a keeper |
 | Contributions | Curated by the owner only |
 | Video sources | No restrictions |
-| Mockups | Done: home, drill finder, drill page, phone views, brand sheet |
+| Mockups | Done: Option A (problem-first home, finder, drill page, phone views), Option B (goal tiles home, goal page, phone tiles), brand sheet |
+| Landing page | Leaning toward Option B, goal tiles. Problem search stays as a secondary path |
+| Tagging | Drills tag `focuses` (fix or build); goals are derived. Replaces the old `problems` field |
+| Goal tiles | The 12 listed in section 3 |
