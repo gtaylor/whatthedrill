@@ -314,11 +314,14 @@ Light theme only for v1 since white is the identity. Dark mode can come later.
 
 ## 8. Milestones
 
-1. **Skeleton:** Astro project, content schema, design tokens, layout,
-   5 sample drills, deployed to `*.pages.dev`.
+1. **Skeleton:** ✅ built. Astro 7 project, content schema with cross-reference
+   validation, design tokens, layout, the category → area → drill pages,
+   "How are you practicing?" filtering, lite YouTube embeds, CI, and 5 sample
+   drills. `MIN_DRILLS_PER_AREA` is 1 until Content v1. Remaining: connect the
+   repo to Cloudflare Pages (steps in README.md) and watch the 5 videos.
 2. **Content v1:** final categories, areas and focuses, plus 50–75 drills
    with checked videos, enough for every v1 area to pass the 5-drill minimum.
-   Validation CI and coverage report.
+   Then raise `MIN_DRILLS_PER_AREA` to 5.
 3. **Find and decide:** category home, category and area pages, filters with
    URL state, focus and position pages, related drills, lite embeds.
 4. **Polish and launch:** logo and wordmark, OG images, structured data,

@@ -1,0 +1,287 @@
+# The specific things inside an area. Drills are tagged with these and nothing
+# else; areas and categories are worked out from them.
+#   kind: fix   = something going wrong (shown under "What's happening?")
+#   kind: build = something to develop (shown under "What to build")
+# A focus can sit under more than one area.
+
+# --- Make better contact ---
+- id: swinging-and-missing
+  label: Swinging and missing
+  kind: fix
+  areas: [make-contact]
+- id: rolling-over
+  label: Rolling over
+  kind: fix
+  areas: [make-contact]
+  signs: Weak ground balls to the pull side; the top hand flips over at contact.
+- id: popping-up
+  label: Popping up
+  kind: fix
+  areas: [make-contact]
+- id: long-swing
+  label: Long, loopy swing
+  kind: fix
+  areas: [make-contact]
+  signs: The hands push away from the body early ("casting") and the bat takes a wide path to the ball.
+- id: eyes-off-ball
+  label: Eyes off the ball
+  kind: fix
+  areas: [make-contact]
+- id: stepping-in-bucket
+  label: Stepping in the bucket
+  kind: fix
+  areas: [make-contact]
+- id: dropping-hands
+  label: Dropping the hands
+  kind: fix
+  areas: [make-contact]
+
+# --- Hit with more power ---
+- id: bat-speed
+  label: Bat speed
+  kind: build
+  areas: [hit-for-power]
+- id: legs-and-hips
+  label: Use your legs and hips
+  kind: build
+  areas: [hit-for-power]
+- id: drive-in-air
+  label: Drive it in the air
+  kind: build
+  areas: [hit-for-power]
+- id: hitter-strength
+  label: Strength for hitters
+  kind: build
+  areas: [hit-for-power]
+
+# --- Swing at better pitches ---
+- id: late-on-fastballs
+  label: Late on fastballs
+  kind: fix
+  areas: [better-pitches]
+- id: chasing
+  label: Chasing bad pitches
+  kind: fix
+  areas: [better-pitches]
+- id: pitch-recognition
+  label: Pitch recognition
+  kind: build
+  areas: [better-pitches]
+- id: two-strike-hitting
+  label: Two-strike hitting
+  kind: build
+  areas: [better-pitches]
+- id: bunting
+  label: Bunting
+  kind: build
+  areas: [better-pitches]
+
+# --- Field ground balls cleanly ---
+- id: not-getting-low
+  label: Not getting low
+  kind: fix
+  areas: [ground-balls]
+  signs: Balls go under the glove or between the legs; the fielder bends at the waist instead of the knees.
+- id: stabbing
+  label: Stabbing at the ball
+  kind: fix
+  areas: [ground-balls]
+  signs: The glove starts high and jabs down at the last second, so balls bounce off the heel of the glove.
+- id: backhand
+  label: Backhand trouble
+  kind: fix
+  areas: [ground-balls]
+- id: footwork-to-throw
+  label: Footwork into the throw
+  kind: build
+  areas: [ground-balls]
+- id: first-step
+  label: Quicker first step
+  kind: build
+  areas: [ground-balls, get-faster]
+- id: double-plays
+  label: Double plays
+  kind: build
+  areas: [ground-balls]
+
+# --- Catch more fly balls ---
+- id: misjudging-fly-balls
+  label: Misjudging fly balls
+  kind: fix
+  areas: [fly-balls]
+- id: drifting
+  label: Drifting under the ball
+  kind: fix
+  areas: [fly-balls]
+- id: drop-step
+  label: Drop steps
+  kind: build
+  areas: [fly-balls]
+- id: calling-for-it
+  label: Calling for it
+  kind: build
+  areas: [fly-balls]
+- id: sun-balls
+  label: Catching in the sun
+  kind: build
+  areas: [fly-balls]
+
+# --- Become a better catcher ---
+- id: blocking
+  label: Balls getting by in the dirt
+  kind: fix
+  areas: [catcher]
+- id: slow-throws-to-second
+  label: Slow throws to second
+  kind: fix
+  areas: [catcher]
+- id: receiving
+  label: Receiving and framing
+  kind: build
+  areas: [catcher]
+- id: catcher-stance
+  label: Catcher's stance
+  kind: build
+  areas: [catcher]
+
+# --- Make better throws ---
+- id: wild-throws
+  label: Throws all over the place
+  kind: fix
+  areas: [better-throws]
+  signs: Throws sail high, bounce short or tail off to one side, even from short distances.
+- id: short-arming
+  label: Short-arming it
+  kind: fix
+  areas: [better-throws]
+  signs: The ball gets pushed like a dart, with the elbow low and no full arm circle.
+- id: all-arm
+  label: All arm, no legs
+  kind: fix
+  areas: [better-throws]
+- id: slow-transfer
+  label: Slow transfer
+  kind: fix
+  areas: [better-throws]
+- id: four-seam-grip
+  label: Four-seam grip
+  kind: build
+  areas: [better-throws]
+- id: arm-strength
+  label: Arm strength
+  kind: build
+  areas: [better-throws]
+
+# --- Throw more strikes ---
+- id: walks
+  label: Too many walks
+  kind: fix
+  areas: [throw-strikes]
+- id: flying-open
+  label: Flying open
+  kind: fix
+  areas: [throw-strikes]
+- id: inconsistent-release
+  label: Inconsistent release
+  kind: fix
+  areas: [throw-strikes]
+- id: no-follow-through
+  label: No follow-through
+  kind: fix
+  areas: [throw-strikes]
+- id: stretch
+  label: Pitching from the stretch
+  kind: build
+  areas: [throw-strikes]
+- id: velocity
+  label: Velocity
+  kind: build
+  areas: [throw-strikes]
+  note: For players 13 and up.
+
+# --- Warm up and protect your arm ---
+- id: throwing-warmup
+  label: Throwing warm-up routine
+  kind: build
+  areas: [arm-care]
+- id: arm-care-routine
+  label: Arm care
+  kind: build
+  areas: [arm-care]
+- id: long-toss
+  label: Long toss
+  kind: build
+  areas: [arm-care]
+
+# --- Run the bases smarter ---
+- id: slow-out-of-box
+  label: Slow out of the box
+  kind: fix
+  areas: [run-bases]
+- id: wide-turns
+  label: Wide turns
+  kind: fix
+  areas: [run-bases]
+  signs: The runner swings far out into right field after first base, or slows down to touch the bag.
+- id: leads
+  label: Leads
+  kind: build
+  areas: [run-bases]
+- id: sliding
+  label: Sliding
+  kind: build
+  areas: [run-bases, without-fear]
+- id: reading-the-ball
+  label: Reading the ball
+  kind: build
+  areas: [run-bases]
+
+# --- Get faster and quicker ---
+- id: sprint-speed
+  label: Sprint speed
+  kind: build
+  areas: [get-faster]
+- id: agility
+  label: Agility
+  kind: build
+  areas: [get-faster]
+- id: footwork
+  label: Footwork
+  kind: build
+  areas: [get-faster]
+
+# --- Learn the basics ---
+- id: basics-throwing
+  label: How to throw
+  kind: build
+  areas: [learn-basics]
+- id: basics-catching
+  label: How to catch
+  kind: build
+  areas: [learn-basics]
+- id: basics-swinging
+  label: How to swing
+  kind: build
+  areas: [learn-basics]
+- id: basics-baserunning
+  label: How to run the bases
+  kind: build
+  areas: [learn-basics]
+
+# --- Play without fear ---
+- id: bailing-out
+  label: Bailing out at the plate
+  kind: fix
+  areas: [without-fear]
+- id: fear-of-grounders
+  label: Scared of hard grounders
+  kind: fix
+  areas: [without-fear]
+- id: nervous-behind-plate
+  label: Nervous behind the plate
+  kind: fix
+  areas: [without-fear, catcher]
+- id: hit-by-pitch
+  label: Getting hit by a pitch safely
+  kind: build
+  areas: [without-fear]

@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+import DrillCard from '../../components/DrillCard.astro';
+import PracticeChips from '../../components/PracticeChips.astro';
+import { getCatalog } from '../../lib/catalog';
+
+const { drills } = await getCatalog();
+---
+
+<Base title="All drills" description="Every drill on WhatTheDrill, each with a video.">
+  <div class="page">
+    <header class="intro">
+      <h1 class="display">All drills</h1>
+      <p class="lede">Everything in one place. More filters (position, skill, equipment) are coming.</p>
+    </header>
+    <PracticeChips />
+    <p class="count-line" aria-live="polite" data-count>{drills.length} drills</p>
+    <div class="grid" data-drill-list>
+      {drills.map((d) => <DrillCard drill={d} />)}
+    </div>
+    <p class="empty" data-empty hidden>Nothing here for that way of practicing yet. Try another chip.</p>
+  </div>
+</Base>
+
+<style>
+  .intro {
+    display: grid;
+    gap: 10px;
+    padding-block: 40px 24px;
+  }
+  .count-line {
+    margin: 28px 0 20px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 26px;
+    text-transform: uppercase;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
+    gap: 20px;
+  }
+  .empty {
+    padding: 32px;
+    border: 1.5px dashed var(--line);
+    border-radius: var(--radius);
+    text-align: center;
+    color: var(--ink-soft);
+  }
+</style>

@@ -1,0 +1,260 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import DrillCard from '../../components/DrillCard.astro';
+import LiteYouTube from '../../components/LiteYouTube.astro';
+import StitchRule from '../../components/StitchRule.astro';
+import {
+  agesLabel,
+  areaUrl,
+  categoryUrl,
+  expandPositions,
+  FORMAT_LABELS,
+  getCatalog,
+  levelLabel,
+  playersLabel,
+  SPACE_LABELS,
+  type Drill,
+} from '../../lib/catalog';
+import { POSITION_NAMES } from '../../lib/positions';
+
+export const getStaticPaths = (async () => {
+  const catalog = await getCatalog();
+  return catalog.drills.map((drill) => ({ params: { id: drill.id }, props: { drill } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  drill: Drill;
+}
+
+const { drill } = Astro.props;
+const d = drill.data;
+const catalog = await getCatalog();
+const { Content } = await render(drill);
+
+const areas = catalog.areasOf(drill);
+const primaryArea = areas.find((a) => catalog.isAreaLive(a.id)) ?? areas[0];
+const category = catalog.category(primaryArea.data.category.id);
+const focuses = d.focuses.map((f) => catalog.focus(f.id));
+const positions = expandPositions(d.positions);
+
+// Hand-picked related drills first, then fill with drills that share a focus.
+const picked = d.related.map((r) => catalog.drill(r.id));
+const sharing = catalog.drills.filter(
+  (other) =>
+    other.id !== drill.id &&
+    !picked.includes(other) &&
+    other.data.focuses.some((f) => d.focuses.some((mine) => mine.id === f.id)),
+);
+const related = [...picked, ...sharing].slice(0, 3);
+
+const glance = [
+  ['Time', `${d.duration_min} min`],
+  ['Players', `${playersLabel(d.players)} (${FORMAT_LABELS[d.format].toLowerCase()})`],
+  ['Ages', agesLabel(d.ages)],
+  ['Level', levelLabel(d.level)],
+  ['Space', SPACE_LABELS[d.space]],
+  ['Equipment', d.equipment.join(', ')],
+];
+const video = d.videos[0];
+---
+
+<Base title={d.title} description={d.summary} activeCategory={category.id}>
+  <div class="page">
+    <nav aria-label="Breadcrumb" class="crumbs">
+      <a href="/" data-carry>Home</a><span aria-hidden="true">/</span>
+      <a href={categoryUrl(category)} data-carry>{category.data.title}</a><span aria-hidden="true">/</span>
+      <a href={areaUrl(primaryArea)} data-carry>{primaryArea.data.title}</a>
+    </nav>
+
+    <header class="intro">
+      <p class="eyebrow">{category.data.title} · {FORMAT_LABELS[d.format]} drill</p>
+      <h1 class="display">{d.title}</h1>
+      <p class="lede">{d.summary}</p>
+    </header>
+
+    <div class="layout">
+      <article class="main">
+        <LiteYouTube url={video.url} title={video.title} channel={video.channel} start={video.start} />
+        <div class="prose">
+          <Content />
+        </div>
+      </article>
+
+      <aside class="side">
+        <section class="glance">
+          <h2 class="label">At a glance</h2>
+          <dl>
+            {
+              glance.map(([k, v]) => (
+                <div>
+                  <dt>{k}</dt>
+                  <dd>{v}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </section>
+        <section class="box">
+          <h2 class="label">Works on</h2>
+          <div class="chips">
+            {
+              focuses.map((f) => {
+                const area = catalog.area(f.data.areas[0].id);
+                return catalog.isAreaLive(area.id) ? (
+                  <a href={areaUrl(area, f.id)} class="chip chip--build" data-carry>
+                    {f.data.label}
+                  </a>
+                ) : (
+                  <span class="chip chip--build">{f.data.label}</span>
+                );
+              })
+            }
+          </div>
+          <h2 class="label">Best for</h2>
+          <ul class="positions">
+            {
+              positions.map((p) => (
+                <li title={POSITION_NAMES[p as keyof typeof POSITION_NAMES]}>
+                  <span class="visually-hidden">{POSITION_NAMES[p as keyof typeof POSITION_NAMES]}</span>
+                  <span aria-hidden="true">{p}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+      </aside>
+    </div>
+
+    {
+      related.length > 0 && (
+        <section class="related">
+          <StitchRule />
+          <h2 class="h2">Pairs well with</h2>
+          <div class="related-grid">
+            {related.map((r) => (
+              <DrillCard drill={r} variant="row" />
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+</Base>
+
+<style>
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-block: 24px;
+    font-size: 15px;
+    color: var(--ink-soft);
+  }
+  .crumbs a {
+    font-weight: 600;
+  }
+  .intro {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .intro h1 {
+    font-size: clamp(42px, 6vw, 72px);
+  }
+
+  .layout {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 40px;
+  }
+  .main {
+    flex: 999 1 560px;
+    min-width: 0;
+    display: grid;
+    gap: 32px;
+  }
+  .side {
+    flex: 1 1 280px;
+    display: grid;
+    gap: 20px;
+  }
+  .glance {
+    padding: 24px;
+    border-radius: var(--radius);
+    background: var(--chalk);
+  }
+  .glance dl {
+    display: grid;
+    gap: 12px;
+    margin: 16px 0 0;
+  }
+  .glance dl > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .glance dl > div:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+  dt {
+    font-size: 15px;
+    color: var(--ink-soft);
+  }
+  dd {
+    margin: 0;
+    font-weight: 700;
+    text-align: right;
+  }
+  .box {
+    display: grid;
+    gap: 12px;
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .box .label:not(:first-child) {
+    margin-top: 10px;
+  }
+  .box .chip {
+    min-height: 40px;
+    padding-inline: 14px;
+  }
+  .positions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .positions li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 17px;
+  }
+
+  .related {
+    display: grid;
+    gap: 24px;
+    margin-top: 64px;
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 16px;
+  }
+</style>

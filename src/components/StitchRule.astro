@@ -1,0 +1,14 @@
+---
+// The red stitch divider. Each instance gets its own pattern id so several
+// can sit on one page.
+const id = `stitch-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<svg class="stitch-rule" width="100%" height="12" aria-hidden="true">
+  <defs>
+    <pattern id={id} width="20" height="12" patternUnits="userSpaceOnUse">
+      <path d="M5 2 L10 9 L15 2" fill="none" stroke="#C62A3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </pattern>
+  </defs>
+  <rect width="100%" height="12" fill={`url(#${id})`}></rect>
+</svg>

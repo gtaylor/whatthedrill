@@ -1,0 +1,110 @@
+---
+import Logo from './Logo.astro';
+import { categoryUrl, getCatalog } from '../lib/catalog';
+
+interface Props {
+  activeCategory?: string;
+}
+
+const { activeCategory } = Astro.props;
+const { tileCategories } = await getCatalog();
+const onDrills = Astro.url.pathname === '/drills/';
+---
+
+<header class="site-header">
+  <div class="page bar">
+    <a href="/" class="brand" data-carry aria-label="WhatTheDrill home">
+      <Logo />
+      <span class="wordmark">What<span class="the">the</span>Drill</span>
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        {
+          tileCategories.map((c) => (
+            <li>
+              <a
+                href={categoryUrl(c)}
+                data-carry
+                aria-current={c.id === activeCategory ? 'page' : undefined}
+              >
+                {c.data.title}
+              </a>
+            </li>
+          ))
+        }
+        <li><a href="/drills/" data-carry aria-current={onDrills ? 'page' : undefined}>All drills</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+  }
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 24px;
+    padding-block: 12px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .the {
+    margin: 0 3px;
+    color: var(--stitch);
+    font-size: 17px;
+    vertical-align: 3px;
+  }
+  nav {
+    margin-left: auto;
+  }
+  nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  nav a {
+    display: block;
+    padding: 10px 12px;
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+  }
+  nav a[aria-current='page'] {
+    color: var(--stitch);
+    font-weight: 700;
+  }
+  @media (max-width: 700px) {
+    nav {
+      margin-left: 0;
+      width: 100%;
+      overflow-x: auto;
+    }
+    nav ul {
+      flex-wrap: nowrap;
+      margin-inline: -12px;
+    }
+    nav a {
+      white-space: nowrap;
+    }
+  }
+</style>

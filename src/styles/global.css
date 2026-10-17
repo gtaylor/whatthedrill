@@ -1,0 +1,302 @@
+/* Design tokens: see PLAN.md, section 5. */
+:root {
+  --paper: #ffffff;
+  --chalk: #f6f8fa;
+  --line: #e2e7ee;
+  --ink: #0e2a47;
+  --ink-soft: #4a5d75;
+  --stitch: #c62a3b;
+  --stitch-light: #ff8a95; /* stitch red on navy */
+  --sky: #e3edf8;
+  --on-ink-soft: #d5deea;
+  --thumb-label: #9fb3cc;
+
+  --font-body: 'Barlow', system-ui, sans-serif;
+  --font-display: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 20px;
+  --page-width: 1200px;
+  --gutter: 24px;
+
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--ink);
+}
+a:hover {
+  color: var(--stitch);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 3px solid var(--stitch);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.page {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}
+
+@media (max-width: 600px) {
+  :root {
+    --gutter: 16px;
+  }
+}
+
+/* ---- Type ---- */
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 0.95;
+  margin: 0;
+}
+
+h1.display {
+  font-size: clamp(44px, 7vw, 80px);
+}
+
+.h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(28px, 4vw, 38px);
+  line-height: 1;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--stitch);
+}
+
+.label {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.lede {
+  margin: 0;
+  max-width: 660px;
+  font-size: clamp(17px, 2vw, 20px);
+  color: var(--ink-soft);
+}
+
+.link-strong {
+  font-weight: 700;
+}
+
+/* ---- Chips and buttons ---- */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.chip:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.chip[aria-pressed='true'] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.chip--tag {
+  min-height: 0;
+  padding: 5px 10px;
+  border: 0;
+  background: var(--sky);
+  font-size: 13px;
+}
+.chip--build {
+  background: var(--sky);
+  border-color: var(--sky);
+}
+.chip .count {
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0.75;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 24px;
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.button--primary {
+  background: var(--stitch);
+  color: var(--paper);
+}
+.button--primary:hover {
+  background: #a92232;
+  color: var(--paper);
+}
+.button--light {
+  background: var(--paper);
+  color: var(--ink);
+}
+.button--outline-light {
+  border-color: var(--paper);
+  color: var(--paper);
+}
+.button--outline-light:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--paper);
+}
+
+.icon-box {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--chalk);
+}
+.icon-box--lg {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+}
+.icon-box--xl {
+  width: 88px;
+  height: 88px;
+  border-radius: 22px;
+}
+
+/* ---- Prose (drill bodies) ---- */
+
+.prose h2 {
+  margin: 40px 0 14px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 32px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.prose > :first-child {
+  margin-top: 0;
+}
+.prose p,
+.prose li {
+  font-size: 18px;
+}
+.prose ol {
+  counter-reset: step;
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+.prose ol > li {
+  counter-increment: step;
+  position: relative;
+  padding-left: 52px;
+  min-height: 36px;
+  padding-top: 4px;
+}
+.prose ol > li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+}
+.prose ul {
+  padding-left: 22px;
+  display: grid;
+  gap: 8px;
+}
+.prose li::marker {
+  color: var(--stitch);
+}

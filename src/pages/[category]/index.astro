@@ -1,0 +1,220 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import DrillCard from '../../components/DrillCard.astro';
+import Icon from '../../components/Icon.astro';
+import PracticeChips from '../../components/PracticeChips.astro';
+import StitchRule from '../../components/StitchRule.astro';
+import { areaUrl, getCatalog, type Category } from '../../lib/catalog';
+
+export const getStaticPaths = (async () => {
+  const catalog = await getCatalog();
+  const live = [...catalog.tileCategories, ...(catalog.bannerCategory ? [catalog.bannerCategory] : [])];
+  return live.map((category) => ({ params: { category: category.id }, props: { category } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  category: Category;
+}
+
+const { category } = Astro.props;
+const catalog = await getCatalog();
+const areas = catalog.liveAreas(category.id).map((area) => {
+  const drills = catalog.drillsInArea(area.id);
+  // Only offer focus chips that lead to at least one drill.
+  const focuses = catalog.focuses.filter(
+    (f) => f.data.areas.some((a) => a.id === area.id) && drills.some((d) => d.data.focuses.some((df) => df.id === f.id)),
+  );
+  return {
+    area,
+    fixes: focuses.filter((f) => f.data.kind === 'fix'),
+    builds: focuses.filter((f) => f.data.kind === 'build'),
+  };
+});
+const drills = catalog.drillsInCategory(category.id);
+---
+
+<Base title={category.data.title} description={category.data.blurb} activeCategory={category.id}>
+  <div class="page">
+    <nav aria-label="Breadcrumb" class="crumbs">
+      <a href="/" data-carry>Home</a><span aria-hidden="true">/</span><span aria-current="page">{category.data.title}</span>
+    </nav>
+
+    <header class="intro">
+      <span class="icon-box icon-box--xl"><Icon name={category.data.icon} size={46} /></span>
+      <div>
+        <h1 class="display">{category.data.title}</h1>
+        <p class="lede">{category.data.blurb} Pick an area, or tap what you're seeing to jump straight to drills.</p>
+      </div>
+    </header>
+
+    <PracticeChips />
+
+    <div class="areas">
+      {
+        areas.map(({ area, fixes, builds }) => (
+          <section class="area">
+            <div class="area-head">
+              <span class="icon-box">
+                <Icon name={area.data.icon} size={28} />
+              </span>
+              <h2 class="area-title">
+                <a href={areaUrl(area)} data-carry>
+                  {area.data.title}
+                </a>
+              </h2>
+            </div>
+            <p class="area-blurb">{area.data.blurb}</p>
+            {fixes.length > 0 && (
+              <div class="group">
+                <p class="label">What's happening?</p>
+                <div class="chips">
+                  {fixes.map((f) => (
+                    <a href={areaUrl(area, f.id)} class="chip" data-carry>
+                      {f.data.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+            {builds.length > 0 && (
+              <div class="group">
+                <p class="label">What to build</p>
+                <div class="chips">
+                  {builds.map((f) => (
+                    <a href={areaUrl(area, f.id)} class="chip chip--build" data-carry>
+                      {f.data.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+            <a href={areaUrl(area)} class="see-all link-strong" data-carry>
+              See all drills →
+            </a>
+          </section>
+        ))
+      }
+    </div>
+
+    <section class="all">
+      <StitchRule />
+      <div class="all-head">
+        <h2 class="h2">Every {category.data.title.toLowerCase()} drill</h2>
+        <p class="count" aria-live="polite" data-count>{drills.length} drills</p>
+      </div>
+      <div class="grid" data-drill-list>
+        {drills.map((d) => <DrillCard drill={d} />)}
+      </div>
+      <p class="empty" data-empty hidden>Nothing here for that way of practicing yet. Try another chip.</p>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-block: 24px;
+    font-size: 15px;
+    color: var(--ink-soft);
+  }
+  .crumbs a {
+    font-weight: 600;
+  }
+  .intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 22px;
+    margin-bottom: 28px;
+  }
+  .intro > div {
+    flex: 1 1 420px;
+    display: grid;
+    gap: 8px;
+  }
+
+  .areas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr));
+    gap: 18px;
+    margin-top: 28px;
+  }
+  .area {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 26px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-lg);
+  }
+  .area-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .area-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 30px;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .area-title a {
+    text-decoration: none;
+  }
+  .area-blurb {
+    margin: 0;
+    font-size: 16px;
+    color: var(--ink-soft);
+  }
+  .group {
+    display: grid;
+    gap: 8px;
+  }
+  .group .chip {
+    min-height: 40px;
+    padding-inline: 13px;
+    font-weight: 500;
+  }
+  .see-all {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+
+  .all {
+    margin-top: 56px;
+  }
+  .all-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 16px;
+    margin: 36px 0 20px;
+  }
+  .count {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 22px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
+    gap: 20px;
+  }
+  .empty {
+    padding: 32px;
+    border: 1.5px dashed var(--line);
+    border-radius: var(--radius);
+    text-align: center;
+    color: var(--ink-soft);
+  }
+</style>

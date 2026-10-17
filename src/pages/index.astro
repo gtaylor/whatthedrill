@@ -1,0 +1,215 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import PracticeChips from '../components/PracticeChips.astro';
+import { areaUrl, categoryUrl, getCatalog } from '../lib/catalog';
+
+const catalog = await getCatalog();
+const banner = catalog.bannerCategory;
+const bannerAreas = banner ? catalog.liveAreas(banner.id) : [];
+---
+
+<Base>
+  <section class="page hero">
+    <h1 class="display">What do you want to get better at?</h1>
+    <p class="lede">Pick an area. We'll narrow it down from there, and every drill has a video.</p>
+    <PracticeChips />
+  </section>
+
+  <section class="page" aria-label="Categories">
+    <ul class="tiles">
+      {
+        catalog.tileCategories.map((c) => (
+          <li>
+            <a href={categoryUrl(c)} class="tile" data-carry>
+              <span class="icon-box icon-box--lg">
+                <Icon name={c.data.icon} size={38} />
+              </span>
+              <span class="tile-body">
+                <span class="tile-head">
+                  <span class="tile-title">{c.data.title}</span>
+                  <span class="arrow">
+                    <Icon name="arrow" size={26} strokeWidth={2.5} />
+                  </span>
+                </span>
+                <span class="tile-areas">
+                  {catalog.liveAreas(c.id).map((a) => (
+                    <span class="tile-area">
+                      <svg width="14" height="10" viewBox="0 0 14 10" aria-hidden="true">
+                        <path d="M2 2L7 8L12 2" fill="none" stroke="#C62A3B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                      {a.data.title}
+                    </span>
+                  ))}
+                </span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  {
+    banner && (
+      <section class="page">
+        <div class="banner">
+          <span class="icon-box icon-box--lg banner-icon">
+            <Icon name={banner.data.icon} size={38} />
+          </span>
+          <div class="banner-text">
+            <p class="eyebrow">{banner.data.title}</p>
+            <h2 class="h2">New to baseball, or a little nervous?</h2>
+            <p>{banner.data.blurb}</p>
+          </div>
+          <div class="banner-actions">
+            {bannerAreas.map((a, i) => (
+              <a href={areaUrl(a)} class:list={['button', i === 0 ? 'button--light' : 'button--outline-light']} data-carry>
+                {a.data.title}
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="page">
+    <div class="browse">
+      <span class="h2 browse-title">Already know what you need?</span>
+      <a href="/drills/" class="link-strong" data-carry>Browse all {catalog.drills.length} drills →</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    display: grid;
+    gap: 16px;
+    padding-block: 56px 28px;
+  }
+  .hero .lede {
+    margin-bottom: 12px;
+  }
+
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr));
+    gap: 18px;
+    margin: 0;
+    padding: 12px 0 24px;
+    list-style: none;
+  }
+  .tile {
+    display: flex;
+    align-items: flex-start;
+    gap: 22px;
+    height: 100%;
+    padding: 28px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-lg);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .tile:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+    box-shadow: 0 8px 28px rgba(14, 42, 71, 0.1);
+  }
+  .tile-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+  }
+  .tile-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .tile-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(30px, 4vw, 40px);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .arrow {
+    color: var(--stitch);
+  }
+  .tile-areas {
+    display: grid;
+    gap: 8px;
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .tile-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  @media (max-width: 600px) {
+    .tile {
+      gap: 16px;
+      padding: 18px;
+    }
+    .icon-box--lg {
+      width: 56px;
+      height: 56px;
+    }
+  }
+
+  .banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px;
+    padding: 32px;
+    border-radius: var(--radius-lg);
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .banner-icon {
+    background: rgba(255, 255, 255, 0.12);
+  }
+  .banner-text {
+    flex: 1 1 360px;
+    display: grid;
+    gap: 6px;
+  }
+  .banner .eyebrow {
+    color: var(--stitch-light);
+  }
+  .banner p:last-child {
+    margin: 0;
+    color: var(--on-ink-soft);
+  }
+  .banner-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  @media (max-width: 600px) {
+    .banner {
+      padding: 22px;
+    }
+    .banner-actions .button {
+      flex: 1 1 140px;
+    }
+  }
+
+  .browse {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 12px 24px;
+    margin-top: 40px;
+    padding-block: 28px;
+    border-top: 1px solid var(--line);
+  }
+  .browse-title {
+    font-size: 26px;
+  }
+</style>

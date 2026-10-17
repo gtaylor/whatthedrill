@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="About" description="What WhatTheDrill is and where the videos come from.">
+  <div class="page about">
+    <h1 class="display">About</h1>
+    <div class="prose">
+      <p>
+        WhatTheDrill helps players, parents and coaches find the right baseball drill fast. Pick what you want to get
+        better at, say how you're practicing, and every drill comes with a video showing how it's done.
+      </p>
+      <h2>Where the videos come from</h2>
+      <p>
+        Videos are embedded from YouTube and belong to their creators. Each drill page credits the channel and links to
+        the original. We write our own descriptions, steps and coaching cues.
+      </p>
+      <p>
+        Videos load from YouTube's privacy-enhanced domain, and only when you press play. The site uses no cookies and
+        has no accounts.
+      </p>
+      <h2>Not affiliated</h2>
+      <p>WhatTheDrill is not affiliated with Major League Baseball or any team.</p>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .about {
+    display: grid;
+    gap: 24px;
+    max-width: 760px;
+    padding-top: 40px;
+  }
+</style>

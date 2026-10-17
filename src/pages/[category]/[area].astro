@@ -1,0 +1,206 @@
+---
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import DrillCard from '../../components/DrillCard.astro';
+import Icon from '../../components/Icon.astro';
+import PracticeChips from '../../components/PracticeChips.astro';
+import { areaUrl, categoryUrl, getCatalog, type Area } from '../../lib/catalog';
+
+export const getStaticPaths = (async () => {
+  const catalog = await getCatalog();
+  return catalog.areas
+    .filter((a) => catalog.isAreaLive(a.id))
+    .map((area) => ({ params: { category: area.data.category.id, area: area.id }, props: { area } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  area: Area;
+}
+
+const { area } = Astro.props;
+const catalog = await getCatalog();
+const category = catalog.category(area.data.category.id);
+const drills = catalog.drillsInArea(area.id);
+const focuses = catalog.focuses.filter(
+  (f) => f.data.areas.some((a) => a.id === area.id) && drills.some((d) => d.data.focuses.some((df) => df.id === f.id)),
+);
+const fixes = focuses.filter((f) => f.data.kind === 'fix');
+const builds = focuses.filter((f) => f.data.kind === 'build');
+const countFor = (focusId: string) => drills.filter((d) => d.data.focuses.some((f) => f.id === focusId)).length;
+// Fix-only areas ask what's going wrong; build-only areas ask what to develop.
+const heading = fixes.length > 0 && builds.length === 0 ? "What's happening?" : builds.length > 0 && fixes.length === 0 ? 'What to build' : 'What do you want to work on?';
+const siblings = catalog.liveAreas(category.id).filter((a) => a.id !== area.id);
+---
+
+<Base title={area.data.title} description={area.data.blurb} activeCategory={category.id}>
+  <div class="page">
+    <nav aria-label="Breadcrumb" class="crumbs">
+      <a href="/" data-carry>Home</a><span aria-hidden="true">/</span>
+      <a href={categoryUrl(category)} data-carry>{category.data.title}</a><span aria-hidden="true">/</span>
+      <span aria-current="page">{area.data.title}</span>
+    </nav>
+
+    <header class="intro">
+      <span class="icon-box icon-box--xl"><Icon name={area.data.icon} size={46} /></span>
+      <div>
+        <p class="eyebrow">{category.data.title}</p>
+        <h1 class="display">{area.data.title}</h1>
+        <p class="lede">{area.data.blurb}</p>
+      </div>
+    </header>
+
+    <div class="panel">
+      <div role="group" aria-labelledby="focus-heading" class="focus-group">
+        <h2 id="focus-heading" class="panel-title">{heading}</h2>
+        <div class="chips">
+          <button type="button" class="chip" data-focus-chip="all" aria-pressed="true">
+            Show all <span class="count" data-chip-count>{drills.length}</span>
+          </button>
+          {
+            [...fixes, ...builds].map((f) => (
+              <button type="button" class:list={['chip', f.data.kind === 'build' && fixes.length > 0 && 'chip--build']} data-focus-chip={f.id} aria-pressed="false">
+                {f.data.label} <span class="count" data-chip-count>{countFor(f.id)}</span>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+      <PracticeChips id="area-practice-label" />
+    </div>
+
+    <p class="count-line" aria-live="polite" data-count>{drills.length} drills</p>
+    <div class="grid" data-drill-list>
+      {drills.map((d) => <DrillCard drill={d} />)}
+    </div>
+    <div class="empty" data-empty hidden>
+      <p class="h2">Nothing for that combo yet</p>
+      <p>Try another way of practicing, or show all.</p>
+    </div>
+
+    {
+      siblings.length > 0 && (
+        <section class="more">
+          <h2 class="h2">More in {category.data.title}</h2>
+          <div class="more-grid">
+            {siblings.map((a) => (
+              <a href={areaUrl(a)} class="more-link" data-carry>
+                <span class="icon-box">
+                  <Icon name={a.data.icon} size={26} />
+                </span>
+                <span>{a.data.title}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+</Base>
+
+<style>
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-block: 24px;
+    font-size: 15px;
+    color: var(--ink-soft);
+  }
+  .crumbs a {
+    font-weight: 600;
+  }
+  .intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 22px;
+    margin-bottom: 32px;
+  }
+  .intro > div {
+    flex: 1 1 420px;
+    display: grid;
+    gap: 6px;
+  }
+  .intro h1 {
+    font-size: clamp(40px, 6vw, 68px);
+  }
+
+  .panel {
+    display: grid;
+    gap: 22px;
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    background: var(--chalk);
+  }
+  .focus-group {
+    display: grid;
+    gap: 12px;
+  }
+  .panel-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 26px;
+    text-transform: uppercase;
+  }
+  .focus-group .chip {
+    min-height: 48px;
+    padding-inline: 18px;
+    font-size: 16px;
+  }
+  .focus-group .chip[aria-pressed='true'] {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .count-line {
+    margin: 28px 0 20px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 26px;
+    text-transform: uppercase;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
+    gap: 20px;
+  }
+  .empty {
+    padding: 40px 24px;
+    border: 1.5px dashed var(--line);
+    border-radius: var(--radius);
+    text-align: center;
+  }
+  .empty p:last-child {
+    margin: 8px 0 0;
+    color: var(--ink-soft);
+  }
+
+  .more {
+    display: grid;
+    gap: 16px;
+    margin-top: 56px;
+  }
+  .more-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+    gap: 16px;
+  }
+  .more-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 22px;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .more-link:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+</style>

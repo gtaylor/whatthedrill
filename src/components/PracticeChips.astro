@@ -1,0 +1,48 @@
+---
+import { PRACTICE_OPTIONS } from '../lib/practice';
+
+interface Props {
+  id?: string;
+}
+const { id = 'practice-label' } = Astro.props;
+---
+
+<div class="practice" role="group" aria-labelledby={id}>
+  <span id={id} class="practice-label">How are you practicing?</span>
+  <div class="chips">
+    {
+      PRACTICE_OPTIONS.map((o) => (
+        <button type="button" class="chip" data-practice-chip={o.id} aria-pressed={o.id === 'any' ? 'true' : 'false'}>
+          {o.label}
+        </button>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .practice {
+    min-width: 0; /* let the chip row scroll instead of widening grid parents */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+  }
+  .practice-label {
+    font-size: 15px;
+    font-weight: 700;
+  }
+  @media (max-width: 600px) {
+    .chips {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      width: calc(100% + 2 * var(--gutter));
+      margin-inline: calc(-1 * var(--gutter));
+      padding-inline: var(--gutter);
+    }
+    .chip {
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+  }
+</style>

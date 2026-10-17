@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # Type-checks pages and components, and validates every drill and
+      # taxonomy file against its schema.
+      - run: npm run check
+      # Also cross-checks references between drills, focuses, areas and
+      # categories, and prints the coverage report.
+      - run: npm run build

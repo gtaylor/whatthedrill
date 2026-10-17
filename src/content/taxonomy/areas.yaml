@@ -1,0 +1,99 @@
+# What someone wants to get better at, in their own words. Each area belongs
+# to one category. An area only shows once it has enough drills
+# (MIN_DRILLS_PER_AREA in src/lib/catalog.ts).
+
+# Hitting
+- id: make-contact
+  title: Make better contact
+  category: hitting
+  blurb: Square up more balls and stop giving away at-bats.
+  icon: bat
+  order: 1
+
+- id: hit-for-power
+  title: Hit with more power
+  category: hitting
+  blurb: Drive the ball harder and farther.
+  icon: power
+  order: 2
+
+- id: better-pitches
+  title: Swing at better pitches
+  category: hitting
+  blurb: Better timing and a better eye at the plate.
+  icon: eye
+  order: 3
+
+# Defense
+- id: ground-balls
+  title: Field ground balls cleanly
+  category: defense
+  blurb: Get low, soft hands, backhands and footwork into the throw.
+  icon: grounder
+  order: 1
+
+- id: fly-balls
+  title: Catch more fly balls
+  category: defense
+  blurb: Read it off the bat, drop step, run to the spot and call it.
+  icon: flyball
+  order: 2
+
+- id: catcher
+  title: Become a better catcher
+  category: defense
+  blurb: Block balls in the dirt, catch pitches cleanly, throw out runners.
+  icon: mask
+  order: 3
+
+# Throwing & Pitching
+- id: better-throws
+  title: Make better throws
+  category: throwing-pitching
+  blurb: Hit your target, use your legs and get it out of the glove faster.
+  icon: target
+  order: 1
+
+- id: throw-strikes
+  title: Throw more strikes
+  category: throwing-pitching
+  blurb: Pitching control, a repeatable delivery and fewer walks.
+  icon: zone
+  order: 2
+
+- id: arm-care
+  title: Warm up and protect your arm
+  category: throwing-pitching
+  blurb: Warm-up routines and arm care that keep young arms healthy.
+  icon: arm
+  order: 3
+
+# Speed & Baserunning
+- id: run-bases
+  title: Run the bases smarter
+  category: speed-baserunning
+  blurb: Out of the box fast, tight turns, good leads and sliding.
+  icon: diamond
+  order: 1
+
+- id: get-faster
+  title: Get faster and quicker
+  category: speed-baserunning
+  blurb: Sprint speed, a quicker first step, agility and footwork.
+  icon: speed
+  order: 2
+
+# Just starting out
+- id: learn-basics
+  title: Learn the basics
+  category: starting-out
+  blurb: Brand new to baseball? Start here to throw, catch, swing and run.
+  icon: sprout
+  order: 1
+
+- id: without-fear
+  title: Play without fear
+  category: starting-out
+  blurb: Stop bailing out at the plate and flinching at hard grounders.
+  icon: shield
+  order: 2

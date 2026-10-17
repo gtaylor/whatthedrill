@@ -1,0 +1,33 @@
+# Home page categories. Each area in areas.yaml names one of these.
+# A category only shows once it has at least one live area (see src/lib/catalog.ts).
+
+- id: hitting
+  title: Hitting
+  blurb: Three ways to get better at the plate.
+  icon: bat
+  order: 1
+
+- id: defense
+  title: Defense
+  blurb: Ground balls, fly balls and life behind the plate.
+  icon: grounder
+  order: 2
+
+- id: throwing-pitching
+  title: Throwing & Pitching
+  blurb: Better throws, more strikes and a healthy arm.
+  icon: target
+  order: 3
+
+- id: speed-baserunning
+  title: Speed & Baserunning
+  blurb: Run the bases smarter and get quicker everywhere.
+  icon: diamond
+  order: 4
+
+- id: starting-out
+  title: Just starting out
+  blurb: Simple first-season drills, and ones that build confidence around the ball.
+  icon: sprout
+  order: 5
+  banner: true
