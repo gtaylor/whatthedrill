@@ -3,10 +3,9 @@ import { POSITIONS } from './positions';
 
 /**
  * An area only appears on the site once it has this many drills, so
- * half-empty pages never go live. Kept at 1 while the catalog is tiny;
- * raise to 5 for Content v1 (PLAN.md, milestone 2).
+ * half-empty pages never go live.
  */
-export const MIN_DRILLS_PER_AREA = 1;
+export const MIN_DRILLS_PER_AREA = 5;
 
 /** Top-level routes that a category id must not collide with. */
 const RESERVED_SLUGS = new Set(['drills', 'about', '404']);
