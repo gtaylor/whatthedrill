@@ -4,7 +4,7 @@ Find the right baseball drill fast. Pick a category, narrow it to what you want
 to get better at, watch the video, go practice.
 
 A static site built with [Astro](https://astro.build). There's no server and no
-database. Hosting is free on Cloudflare Pages. See [PLAN.md](PLAN.md) for the full plan.
+database. Hosting is free on Cloudflare (a static-assets Worker). See [PLAN.md](PLAN.md) for the full plan.
 
 ## Run it locally
 
@@ -52,25 +52,31 @@ has watched.
 5. Run `npm run build`. A typo in an id, a missing field or a non-YouTube URL
    fails the build with a message saying which file and field.
 
-## Deploy to Cloudflare Pages (free)
+## Deploy to Cloudflare (free)
 
-One-time setup, done in the Cloudflare dashboard:
+The site deploys as a Cloudflare Worker that only serves static files.
+`wrangler.jsonc` tells Cloudflare to upload `dist/`. There's no server code,
+and serving static files on Workers is free with no request limits.
 
-1. Sign in (or sign up free) at <https://dash.cloudflare.com>.
-2. Go to **Workers & Pages → Create → Pages → Connect to Git** and pick the
-   `gtaylor/whatthedrill` repository.
-3. Use these build settings:
-   - Framework preset: **Astro**
+One-time setup in the Cloudflare dashboard:
+
+1. Go to **Workers & Pages → Create → Import a repository** and pick
+   `gtaylor/whatthedrill`.
+2. Use these settings:
    - Build command: `npm run build`
-   - Build output directory: `dist`
-   - Environment variable: `NODE_VERSION` = `22`
-4. Choose the production branch (normally `main`). Every other branch and pull
-   request gets its own preview URL.
-5. Save and deploy. The site goes live at `https://<project-name>.pages.dev`.
+   - Deploy command: `npx wrangler deploy` (the default)
+   - Non-production branch deploy command: `npx wrangler versions upload` (the default)
+3. Pick the production branch (normally `main`).
+4. Save and deploy. The site goes live at
+   `https://whatthedrill.<your-subdomain>.workers.dev`.
 
-After that, every push deploys automatically. If the project name isn't
-`whatthedrill`, update `site` in `astro.config.mjs` so canonical URLs match.
+After that, every push to the production branch deploys automatically, and
+other branches get preview URLs. Set `site` in `astro.config.mjs` to the live
+URL so canonical links use it.
 
-To add `whatthedrill.com` later: buy it in **Domain Registration**, then go to
-the Pages project's **Custom domains** tab and add it. Update `site` in
+You can also deploy from your own machine with `npm run deploy`. The first
+time, `npx wrangler login` opens a browser to sign in.
+
+To add `whatthedrill.com` later: buy it in **Domain Registration**, then add it
+under the Worker's **Settings → Domains & Routes**. Update `site` in
 `astro.config.mjs` to match.

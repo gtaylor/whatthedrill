@@ -12,7 +12,7 @@ This is a working plan. Mockups: https://claude.ai/artifact/RgbbZ6zY7J8Mbc8KE7gQ
 | Goal | How the plan meets it |
 | --- | --- |
 | No server to run | Static site, built at deploy time, served from a CDN |
-| Under $5/month | Hosting is free. $0 at launch on `*.pages.dev`; about $1/month once we buy a domain |
+| Under $5/month | Hosting is free. $0 at launch on `*.workers.dev`; about $1/month once we buy a domain |
 | Find and pick drills quickly | Four categories on the home page, then an area, then a focus; every drill on a card you can scan |
 | Videos for every drill | We link or embed existing videos (YouTube first); we don't host any |
 | Metadata: what each drill works on, positions | Typed drill files tagged with focuses (which roll up to areas and categories); the build fails if a field is wrong |
@@ -31,10 +31,10 @@ drills** equally, and every drill says which it is.
 ## 2. Architecture
 
 ```
-  drills/*.md  ──►  Astro build (GitHub Actions / CF Pages)  ──►  static HTML/CSS/JS
+  drills/*.md  ──►  Astro build (Cloudflare Workers Builds)  ──►  static HTML/CSS/JS
   taxonomy/*.yaml        │  validates schema with Zod                 │
                          │  fails build on bad data                   ▼
-                         └─ weekly video-link check ──►  Cloudflare Pages CDN (free)
+                         └─ weekly video-link check ──►  Cloudflare CDN, static assets (free)
 ```
 
 ### Stack
@@ -56,16 +56,18 @@ drills** equally, and every drill says which it is.
 | Piece | Service | Cost |
 | --- | --- | --- |
 | Source, issues, CI | GitHub (this repo) | $0 |
-| Build and hosting | Cloudflare Pages (unlimited bandwidth, 500 builds/mo, preview deploy per PR) | $0 |
-| Domain | Free `whatthedrill.pages.dev` at launch; `whatthedrill.com` through Cloudflare Registrar later | $0 now; about $10.50/yr (about **$0.90/mo**) once bought |
+| Build and hosting | Cloudflare Workers with static assets only (`wrangler.jsonc`): free and unlimited for static files, builds from GitHub, preview URL per branch | $0 |
+| Domain | Free `*.workers.dev` address at launch; `whatthedrill.com` through Cloudflare Registrar later | $0 now; about $10.50/yr (about **$0.90/mo**) once bought |
 | Analytics | Cloudflare Web Analytics (no cookies, no banner) | $0 |
 | Video link checks | Scheduled GitHub Action calling YouTube oEmbed (no API key) | $0 |
 | **Total** | | **$0 now, under $1/month with the domain** |
 
 GitHub Pages is an equally free fallback. Cloudflare wins on preview deploys,
-redirects, and the registrar living in the same place.
+redirects, and the registrar living in the same place. Cloudflare now sets up
+new Git-connected projects as Workers rather than Pages. A static-assets-only
+Worker costs the same ($0) and needs no adapter.
 
-**Domain (decided):** launch on the free `*.pages.dev` address. If the site
+**Domain (decided):** launch on the free `*.workers.dev` address. If the site
 works out, buy `whatthedrill.com` and attach it in Cloudflare. That's a
 settings change, not a rebuild.
 
@@ -317,8 +319,9 @@ Light theme only for v1 since white is the identity. Dark mode can come later.
 1. **Skeleton:** ✅ built. Astro 7 project, content schema with cross-reference
    validation, design tokens, layout, the category → area → drill pages,
    "How are you practicing?" filtering, lite YouTube embeds, CI, and 5 sample
-   drills. `MIN_DRILLS_PER_AREA` is 1 until Content v1. Remaining: connect the
-   repo to Cloudflare Pages (steps in README.md) and watch the 5 videos.
+   drills. `MIN_DRILLS_PER_AREA` is 1 until Content v1. Deploys to
+   Cloudflare as a static-assets Worker (steps in README.md). Remaining:
+   watch the 5 videos and set `site` to the live URL.
 2. **Content v1:** final categories, areas and focuses, plus 50–75 drills
    with checked videos, enough for every v1 area to pass the 5-drill minimum.
    Then raise `MIN_DRILLS_PER_AREA` to 5.
@@ -338,7 +341,7 @@ Light theme only for v1 since white is the identity. Dark mode can come later.
 | Audience | Everyone, tuned for youth through high school |
 | Drill types | Team and individual drills, both first-class |
 | Sport | Baseball only |
-| Domain | Free `*.pages.dev` first; buy `whatthedrill.com` later if it's a keeper |
+| Domain | Free `*.workers.dev` first; buy `whatthedrill.com` later if it's a keeper |
 | Contributions | Curated by the owner only |
 | Video sources | No restrictions |
 | Mockups | Done: Option A (problem-first home, finder, drill page, phone views), Option B (category home, category page, area page, phone home and category), brand sheet |
