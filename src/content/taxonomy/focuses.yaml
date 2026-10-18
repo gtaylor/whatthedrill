@@ -143,6 +143,10 @@
   label: Catcher's stance
   kind: build
   areas: [catcher]
+- id: pop-ups
+  label: Catching pop-ups
+  kind: build
+  areas: [catcher, fly-balls]
 
 # --- Make better throws ---
 - id: wild-throws
